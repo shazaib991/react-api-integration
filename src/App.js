@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
+  const [data, setData] = useState({});
+  const [newData, setNewData] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    const response = await axios.get("https://foodish-api.herokuapp.com/api/");
+    const image = response.data;
+
+    if (image) {
+      setData(image);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [newData]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="image-container">
+      <div className="image">
+        {loading ? <h1>loading</h1> : <img src={data.image} alt="food" />}
+      </div>
+      <button onClick={() => setNewData((prevState) => !prevState)}>
+        random
+      </button>
     </div>
   );
 }
